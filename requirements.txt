@@ -1,0 +1,10 @@
+numpy
+matplotlib
+pandas
+scikit-learn
+torch
+scipy
+graphviz
+factor_analyzer
+semopy
+statsmodels
