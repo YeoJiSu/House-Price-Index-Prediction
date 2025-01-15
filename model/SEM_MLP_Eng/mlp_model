@@ -1,0 +1,23 @@
+// MLP Model Visualization
+digraph {
+	Input [label="Input Layer
+(input_size)" color=lightblue shape=ellipse]
+	fc1 [label="Fully Connected 1
+(128 neurons)" shape=box]
+	fc2 [label="Fully Connected 2
+(64 neurons)" shape=box]
+	fc3 [label="Fully Connected 3
+(32 neurons)" shape=box]
+	fc4 [label="Fully Connected 4
+(16 neurons)" shape=box]
+	fc5 [label="Fully Connected 5
+(1 neuron)" color=orange shape=box]
+	Output [label="Output Layer
+(1 scalar)" color=green shape=ellipse]
+	Input -> fc1
+	fc1 -> fc2
+	fc2 -> fc3
+	fc3 -> fc4
+	fc4 -> fc5
+	fc5 -> Output
+}
