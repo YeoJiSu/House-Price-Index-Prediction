@@ -8,3 +8,4 @@ graphviz
 factor_analyzer
 semopy
 statsmodels
+tqdm
