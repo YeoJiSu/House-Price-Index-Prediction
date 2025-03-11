@@ -14,7 +14,7 @@ REFERENCE_DATE = '2017-11-15'   # Base date
 
 # Kalman Filter Covariance Setting
 KALMAN_OBSERVATION_COV = 10      # Measurement noise
-KALMAN_TRANSITION_COV   = 0.01   # State transition noise
+KALMAN_TRANSITION_COV  = 0.01    # State transition noise
 
 # VAR model parameters
 MAXLAG_FACTOR    = 23
@@ -30,16 +30,3 @@ DIR_PATH       = "/Users/yeojisu/Documents/HPI-Save/example/"
 
 # Common text (if needed)
 COMMON_TXT = f"maxlag={MAXLAG_FACTOR}selected_lag={SELECTED_LAG_FACTOR}kalman={KALMAN_OBSERVATION_COV}&{KALMAN_TRANSITION_COV}"
-
-"""
-Setting for United States
-
-# File path settings
-FEATURE_PATH = os.path.join("..", "data", "US_explainable_variables.csv")
-TARGET_PATH  = os.path.join("..", "data", "US_target_variables.csv")
-
-# Date settings
-TRAIN_DATE     = '2004-01-01'
-TEST_DATE      = '2020-01-01'
-REFERENCE_DATE = '2004-01-01'   # Base date
-"""
