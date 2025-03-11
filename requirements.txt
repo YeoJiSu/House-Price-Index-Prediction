@@ -6,7 +6,7 @@ torch
 scipy
 graphviz
 factor_analyzer
-semopy
 statsmodels
 tqdm
 argparse
+pykalman
