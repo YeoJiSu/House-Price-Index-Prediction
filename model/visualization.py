@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from config import FORECAST_HORIZON
 
 def plot_var_forecast(df, forecast_df, target, test_date, forecast_horizon):
     plt.figure(figsize=(8, 4))
@@ -92,7 +91,7 @@ def plot_additional_test_predictions(target_df, columns_to_use,
                                      test_actual, test_predicted,
                                      addi_test_predicted,
                                      train_dates, test_dates,
-                                     mean_dict, std_dict, f_pd_all):
+                                     mean_dict, std_dict, f_pd_all, forecast_horizon):
     num_cols = len(columns_to_use)
     plt.figure(figsize=(20, num_cols * 6))
     
@@ -106,7 +105,7 @@ def plot_additional_test_predictions(target_df, columns_to_use,
         dat = np.concatenate((train_dates, test_dates))
         
         last_date = np.concatenate((train_dates,test_dates))[-1]
-        new_dat = np.array(pd.date_range(start=last_date, periods=FORECAST_HORIZON, freq="MS") + pd.DateOffset(days=14))
+        new_dat = np.array(pd.date_range(start=last_date, periods=forecast_horizon, freq="MS") + pd.DateOffset(days=14))
         f_pd = pd.DataFrame(f_pd_all.iloc[:,i].values,index=f_pd_all.iloc[:,i].index)
         act_pd = pd.DataFrame(act, index = pd.to_datetime(dat))
         pre_pd = pd.DataFrame(pre, index = pd.to_datetime(np.concatenate((dat,new_dat))))
