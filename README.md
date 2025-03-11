@@ -1,7 +1,7 @@
-# House-Price-Index-Prediction
+# Deep-DFVAR: Dynamic Factor VAR with Deep Learning for Regional House Price Index Forecasting
 
 ```
-conda create -n FA_SEM Python=3.11.4
-conda activate FA_SEM
+conda create -n Deep-DFVAR Python=3.11.4
+conda activate Deep-DFVAR
 pip install -r requirements.txt
 ```
