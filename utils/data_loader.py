@@ -15,6 +15,14 @@ def load_target_data(target_path):
     target_df.index = pd.to_datetime(target_df.index)
     return target_df
 
+def load_target_data_us(target_path):
+    target_df = pd.read_csv(target_path).set_index("observation_date")
+    for col in target_df.columns:
+        target_df[col] = pd.to_numeric(target_df[col], errors='coerce')
+    target_df = target_df.dropna()
+    target_df.index = pd.to_datetime(target_df.index)
+    return target_df
+
 def load_feature_data(feature_path, exp_columns, train_date):
     df = pd.read_csv(feature_path).T
     df.columns = df.iloc[0]
@@ -25,6 +33,14 @@ def load_feature_data(feature_path, exp_columns, train_date):
     for col in df.columns:
         df[col] = pd.to_numeric(df[col], errors='coerce')
     df = df.dropna()
+    return df
+
+def load_feature_data_us(feature_path, exp_columns, train_date):
+    df = pd.read_csv(feature_path).set_index("observation_date")
+    for col in df.columns:
+        df[col] = pd.to_numeric(df[col], errors='coerce')
+    df = df[exp_columns].dropna()
+    df.index = pd.to_datetime(df.index)
     return df
 
 def adf_test(series, name=''):
