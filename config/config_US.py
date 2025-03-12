@@ -4,13 +4,25 @@ import os
 Setting for United States
 """
 # File path settings
-FEATURE_PATH = os.path.join("..", "data", "US_explainable_variables.csv")
-TARGET_PATH  = os.path.join("..", "data", "US_target_variables.csv")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Absolute Path
+FEATURE_PATH = os.path.join(BASE_DIR, "..", "data", "US_explainable_variables.csv")
+TARGET_PATH  = os.path.join(BASE_DIR, "..", "data", "US_target_variables.csv")
 
 # Date settings
 TRAIN_DATE     = '2000-01-01'
 TEST_DATE      = '2020-01-01'
 REFERENCE_DATE = '2000-01-01'   # Base date
+
+# Feature (explanatory variables)
+INTEREST_RATE      = ["call_rate", "bond_10yr"] # "federal_dept"
+STOCK              = ["NASDAQ"]
+MONEY_SUPPLY       = ["M1_velocity", "M2_real", "M2_velocity"]
+LIQUIDITY          = ["financial", "nonfinancial"]
+INFLATION          = ["CPI", "inflation"]
+EMPLOYEE           = ["employee"]
+GDP                = ["GDP"]
+CONSTRUCTION       = ["total_construction", "IPI_supply", "house_supply"]
+FEATURE_COLUMN = INTEREST_RATE + STOCK + MONEY_SUPPLY + LIQUIDITY + INFLATION + EMPLOYEE + GDP + CONSTRUCTION
 
 # Kalman Filter Covariance Setting
 KALMAN_OBSERVATION_COV = 1      # Measurement noise

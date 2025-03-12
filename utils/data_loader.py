@@ -123,6 +123,22 @@ def standardization(train_df, test_df, not_col, target_cols):
             std_dict[x] = std
     return train_df_, test_df_, mean_dict, std_dict
 
+def z_transform(X, mu, std):
+    """
+    ==========================
+    | X: df, mu: df, std: df |
+    ==========================
+    """
+    return (X-mu)/(std+0.000001)
+
+def inv_z_transform(y, mu, std):
+    """
+    ====================================
+    | y: ndarray, mu: df, std: df      |
+    ====================================
+    """
+    return y * (std+0.000001) + mu
+
 def time_slide_df(df, window_size, forecast_size, date, target_cols):
     data_list, dap_list, date_list = [], [], []
     for idx in range(0, df.shape[0] - window_size - forecast_size + 1):

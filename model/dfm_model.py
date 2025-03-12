@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 from statsmodels.tsa.statespace.dynamic_factor import DynamicFactor
 
 def run_dfm(target_df_train, target_df_test, reference_date):
@@ -33,7 +32,7 @@ def run_dfm(target_df_train, target_df_test, reference_date):
     
     # Scaling to match the distribution of the training data
     scale_factor = (target_df_train.std() / shared_component_final.std()).values.reshape(1, -1)
-    shared_component_final = shared_component_final * scale_factor + target_df_train.mean().values # Error
+    shared_component_final = shared_component_final * scale_factor + target_df_train.mean().values
     
     # Calculating offset based on the reference date
     reference_index = target_df_train.index.get_loc(reference_date)
