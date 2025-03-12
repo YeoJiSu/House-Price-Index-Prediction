@@ -10,3 +10,4 @@ statsmodels
 tqdm
 argparse
 pykalman
+einops
