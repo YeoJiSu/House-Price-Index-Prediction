@@ -1,0 +1,5 @@
+OBS_V1, TRANS_V1 = 1, 1 # Version 1 (1, 1)
+OBS_V2, TRANS_V2 = 5, 0.5 # Version 2 (5, 0.5)
+OBS_V3, TRANS_V3 = 5, 0.05 # Version 3 (5, 0.05)
+OBS_V4, TRANS_V4 = 10, 0.01# Version 4 (10, 0.01)
+OBS_V5, TRANS_V5 = 20, 0.001# Version 5 (20, 0.001)
