@@ -124,3 +124,32 @@ def plot_additional_test_predictions(target_df, columns_to_use,
         
     plt.tight_layout()
     plt.show()
+    
+def plot_draw_all_results(columns_to_use, mean_, std_, target_columns, 
+                          csv_path, df, train_dates, train_actual, train_predicted,
+                          test_dates, test_actual, test_predicted):
+    plt.figure(figsize=(20, len(columns_to_use) * 6))  # Adjust the figure size as needed
+    for i in range(len(columns_to_use)):
+        idv_mean = mean_[columns_to_use[i]]
+        idv_std = std_[columns_to_use[i]]
+        
+        real = test_actual[:, i]*idv_std+idv_mean
+        pred = test_predicted[:, i]*idv_std+idv_mean
+        rmse = round(mean_squared_error(real, pred)**0.5,3)
+        mae = round(mean_absolute_error(real, pred),3)
+        if columns_to_use[i] in target_columns:
+            val = [columns_to_use[i].split("_")[0], rmse, mae]
+            pd.DataFrame(val).T.to_csv(csv_path, mode='a', header=False, index=False)
+            # Test 결과 
+            # pd.DataFrame(pred, columns = [columns_to_use[i].split("_")[0]]).T.to_csv(dir_path+f"pred_{version}.csv", mode='a', header=False)
+        plt.subplot(len(columns_to_use), 1, i + 1)
+        plt.plot(df['Date'], df[columns_to_use[i]], c="b")
+        plt.plot(train_dates, train_actual[:, i]*idv_std+idv_mean, c="b")
+        plt.plot(train_dates, train_predicted[:, i]*idv_std+idv_mean, linestyle='--', c="r")
+        plt.axvline(x=test_dates[0], color='black', linestyle=':', linewidth=3,label="Test Start")
+        plt.plot(test_dates, test_actual[:, i]*idv_std+idv_mean, label='Actual Data', c="b")
+        plt.plot(test_dates, test_predicted[:, i]*idv_std+idv_mean, label='Predicted Data', linestyle='--', c="r")
+        plt.title(f'Forecast vs Actuals for {columns_to_use[i]}')
+        plt.xlabel('Date')
+        plt.ylabel('Value')
+        plt.legend()
