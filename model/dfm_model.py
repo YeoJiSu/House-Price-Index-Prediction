@@ -1,13 +1,13 @@
 import numpy as np
 from statsmodels.tsa.statespace.dynamic_factor import DynamicFactor
 
-def run_dfm(target_df_train, target_df_test, reference_date):
+def run_dfm(target_df_train, target_df_test, reference_date, max_factor_count):
     # Differencing training data to make it stationary
     target_train_diff = target_df_train.diff().dropna()
     
     # Selecting the optimal number of common factors based on AIC criterion
     aic_values = {}
-    max_factors = min(len(target_df_train.columns), 5)
+    max_factors = min(len(target_df_train.columns), max_factor_count)
     for k in range(1, max_factors + 1):
         try:
             mod = DynamicFactor(target_train_diff, k_factors=k, factor_order=1)
