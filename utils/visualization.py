@@ -53,7 +53,7 @@ def plot_forecast_vs_actual(target_df, actual, predicted, dates, f_adjustment, t
     
 def plot_deep_learning_results(resid, columns_to_use, train_dates, test_dates,
                                train_actual, train_predicted, test_actual, test_predicted,
-                               mean_dict, std_dict):
+                               mean_dict, std_dict, dir_path, version):
     num_cols = len(columns_to_use)
     plt.figure(figsize=(20, num_cols * 6))
     
@@ -70,6 +70,9 @@ def plot_deep_learning_results(resid, columns_to_use, train_dates, test_dates,
         rmse = round(mean_squared_error(test_actual_rescaled[mask], test_pred_rescaled[mask])**0.5, 3)
         mae  = round(mean_absolute_error(test_actual_rescaled[mask], test_pred_rescaled[mask]), 3)
         print(f"{col}: RMSE={rmse}, MAE={mae}")
+        
+        val =[col.split("_")[0],rmse,mae]
+        pd.DataFrame(val).T.to_csv(dir_path+f"result{version}.csv", mode='a', header=False, index=False)
         
         plt.subplot(num_cols, 1, i + 1)
         plt.plot(pd.to_datetime(resid["Date"]), resid[col], label="Residual", color="gray", alpha=0.7)
