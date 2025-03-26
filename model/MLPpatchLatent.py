@@ -52,11 +52,10 @@ class Model(nn.Module):
         self.trans_cov = configs.trans_cov # transition covariance of Kalman Filter
         
         # Settings for extracting latent features using Transformer
-        self.d_model = getattr(configs, 'd_model', 64)   # Transformer embedding dimension
-        self.nhead = getattr(configs, 'nhead', 4)          # Number of heads in multi-head attention
-        self.num_layers = getattr(configs, 'num_layers', 3)  # Number of Transformer encoder layers
-        self.latent_proj = nn.Linear(1, self.d_model)
-        self.transformer_layer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=self.nhead)
+        self.d_model = getattr(configs, 'd_model', 32)   # Transformer embedding dimension
+        self.nhead = getattr(configs, 'nhead', 1)          # Number of heads in multi-head attention
+        self.num_layers = getattr(configs, 'num_layers', 1)  # Number of Transformer encoder layers
+        self.transformer_layer = nn.TransformerEncoderLayer(d_model=self.c_in, nhead=self.nhead)
         self.transformer_encoder = nn.TransformerEncoder(self.transformer_layer, num_layers=self.num_layers)
         
         # Decomposition using Kalman Filter
@@ -76,6 +75,10 @@ class Model(nn.Module):
         
         # Combined dimension: flatten patch embedding (128 * n_patches) + latent (d_model)
         shared_dim = 128 * self.n_patches + self.d_model
+        
+        # Change Dimension
+        # self.avg_pool = nn.AvgPool3d(3, stride=2)
+        self.change_dim = nn.Linear(self.seq_len, self.d_model)
         
         # Shared module for extracting common features before branching
         self.shared_module = nn.Sequential(
@@ -104,21 +107,9 @@ class Model(nn.Module):
         Returns:
             latent: Tensor of shape [B, C, d_model] - Latent vector per channel.
         """
-        B, L, C = x.size()  # x: [B, L, C]
-        # Reorder dimensions to process per channel: (B, L, C) → (B, C, L)
-        x_perm = x.permute(0, 2, 1)  # [B, C, L]
-        # Reshape to merge B and C: [B*C, L] → [B*C, L, 1]
-        x_reshaped = x_perm.contiguous().view(B * C, L).unsqueeze(-1)
-        # Project scalar values at each time step to d_model dimension
-        x_proj = self.latent_proj(x_reshaped)  # [B*C, L, d_model]
-        # Convert to Transformer input shape [L, B*C, d_model]
-        x_proj = x_proj.permute(1, 0, 2)
-        # Pass through Transformer Encoder (captures temporal patterns)
-        x_trans = self.transformer_encoder(x_proj) # commpare
-        # Perform mean pooling over the time dimension to generate latent vectors per channel
-        latent = x_trans.mean(dim=0)  # [B*C, d_model] # commpare
-        # Restore original batch and channel dimensions: [B, C, d_model]
-        latent = latent.view(B, C, self.d_model)
+        x_trans = self.transformer_encoder(x) # x.shpe = [B, L, C]
+        latent = x_trans.permute(0, 2, 1)
+        latent = self.change_dim(latent)
         return latent
     
     
