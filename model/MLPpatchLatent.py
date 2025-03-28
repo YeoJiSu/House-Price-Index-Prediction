@@ -52,10 +52,10 @@ class Model(nn.Module):
         self.trans_cov = configs.trans_cov # transition covariance of Kalman Filter
         
         # Settings for extracting latent features using Transformer
-        self.d_model = getattr(configs, 'd_model', 32)   # Transformer embedding dimension
+        self.d_model = self.c_in # getattr(configs, 'd_model', 64)   # Transformer embedding dimension
         self.nhead = getattr(configs, 'nhead', 1)          # Number of heads in multi-head attention
-        self.num_layers = getattr(configs, 'num_layers', 1)  # Number of Transformer encoder layers
-        self.transformer_layer = nn.TransformerEncoderLayer(d_model=self.c_in, nhead=self.nhead)
+        self.num_layers = getattr(configs, 'num_layers', 3)  # Number of Transformer encoder layers
+        self.transformer_layer = nn.TransformerEncoderLayer(d_model=self.c_in, nhead=self.nhead) # d_model should be same input vector (c_in)
         self.transformer_encoder = nn.TransformerEncoder(self.transformer_layer, num_layers=self.num_layers)
         
         # Decomposition using Kalman Filter
