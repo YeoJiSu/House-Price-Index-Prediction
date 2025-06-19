@@ -1,24 +1,31 @@
 import torch
 from tqdm import tqdm
+import time
+import numpy as np
 
 def train_deep_learning_model(model, train_dl, test_dl, criterion, optimizer, num_epochs, patience, save_path):
     best_loss = float('inf')
     patience_counter = 0
     train_loss_list = []
     test_loss_list = []
-    
+    train_times = [] # For computational cost analysis
     for epoch in tqdm(range(num_epochs)):
+        train_time = 0 # For computational cost analysis
         model.train()
         loss_list = []
         for data, target in train_dl:
             optimizer.zero_grad()
+            temp = time.time() # For computational cost analysis
             output = model(data)
             loss = criterion(output, target)
             loss.backward()
             optimizer.step()
+            train_time += time.time() - temp # For computational cost analysis
             loss_list.append(loss.item())
         train_loss = sum(loss_list) / len(loss_list)
         train_loss_list.append(train_loss)
+        
+        train_times.append(train_time/len(train_dl)) # For computational cost analysis
         
         model.eval()
         test_losses = []
@@ -39,14 +46,19 @@ def train_deep_learning_model(model, train_dl, test_dl, criterion, optimizer, nu
         if patience_counter >= patience:
             print("Early stopping triggered.")
             break
+    print("Training time: {}".format(np.sum(train_times)/len(train_times))) # For computational cost analysis
     return train_loss_list, test_loss_list
 
 def evaluate_model(model, data_loader):
+    test_time = 0 # For computational cost analysis
     model.eval()
     outputs, targets = None, None
     with torch.no_grad():
         for data, target in data_loader:
+            temp = time.time() # For computational cost analysis
             output = model(data)
+            test_time += time.time() - temp # For computational cost analysis
             outputs = output
             targets = target
+    print("Inference time: {}".format(test_time/len(data_loader))) # For computational cost analysis
     return outputs, targets

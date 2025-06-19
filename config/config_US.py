@@ -38,7 +38,7 @@ WINDOW_SIZE = 3
 MODEL_NAME     = "PatchLatentMLP"
 FORECAST_SIZE  = FORECAST_HORIZON 
 VERSION        = f"{FORECAST_SIZE}{MODEL_NAME}_{KALMAN_OBSERVATION_COV}_{KALMAN_TRANSITION_COV}"
-DIR_PATH       = "/Users/yeojisu/Documents/HPI-Save/example/"
+DIR_PATH       = "./"
 
 # Common text (if needed)
 COMMON_TXT = f"maxlag={MAXLAG_FACTOR}selected_lag={SELECTED_LAG_FACTOR}kalman={KALMAN_OBSERVATION_COV}&{KALMAN_TRANSITION_COV}"
