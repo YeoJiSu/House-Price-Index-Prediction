@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from statsmodels.tsa.stattools import adfuller, grangercausalitytests
 from torch.utils.data import Dataset
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 import torch
 
 def load_target_data(target_path):
@@ -52,6 +54,12 @@ def adf_test(series, name=''):
     print(f'ADF Statistic for {name}: {r[0]:.4f}')
     print(f'p-value for {name}: {p_value:.4f}')
     return p_value < 0.05
+
+def calculate_date_after_n_months(train_date_str, n_months):
+    original_date = datetime.strptime(train_date_str, '%Y-%m-%d').date()
+    new_date = original_date + relativedelta(months=n_months)
+    new_date_str = new_date.strftime('%Y-%m-%d')
+    return new_date_str
 
 def process_series(series, name):
     print(f"\nProcessing {name}")
