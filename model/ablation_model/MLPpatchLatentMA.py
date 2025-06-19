@@ -3,35 +3,35 @@ import torch.nn as nn
 import pandas as pd
 from kalman_filter import apply_kalman_filter
 
-class KalmanDecomposition(nn.Module):
-    def __init__(self, observation_covariance=1, transition_covariance=1):
-        super(KalmanDecomposition, self).__init__()
-        self.obs_cov = observation_covariance
-        self.trans_cov = transition_covariance
-        
-    def forward(self, obs):
-        """_summary_
 
+import torch
+import torch.nn as nn
+import pandas as pd
+
+class MovingAverageDecomposition(nn.Module):
+    def __init__(self, window_size=3):
+        super(MovingAverageDecomposition, self).__init__()
+        self.window = window_size
+
+    def forward(self, obs):
+        """
         Args:
             obs : Tensor of shape [B, seq_len, C]
-
         Returns:
             trend: Tensor of shape [B, seq_len, C]
             residual: Tensor of shape [B, seq_len, C]
         """
         B, L, C = obs.shape
-        trend = torch.zeros_like(obs) # Secure memory of size [B,L,C]
+        trend = torch.zeros_like(obs)
         residual = torch.zeros_like(obs)
         for b in range(B):
             for c in range(C):
-                # Tensor to Numpy
-                series_tensor = obs[b, :, c].detach().cpu()
-                series_numpy = pd.Series(series_tensor.numpy(), index=range(L))
-                smoothed_series = apply_kalman_filter(
-                    series_numpy, self.obs_cov, self.trans_cov
-                )
-                # Numpy to Tensor
-                trend[b, :, c] = torch.tensor(smoothed_series.values, device=obs.device, dtype=obs.dtype)
+                # Tensor → pandas Series
+                series = pd.Series(obs[b, :, c].detach().cpu().numpy(), index=range(L))
+                # 이동평균 (center=True 로 앞뒤 균등 윈도우)
+                ma = series.rolling(window=self.window, min_periods=1, center=True).mean()
+                # Tensor로 복원
+                trend[b, :, c] = torch.tensor(ma.values, device=obs.device, dtype=obs.dtype)
                 residual[b, :, c] = obs[b, :, c] - trend[b, :, c]
         return trend, residual
 
@@ -52,17 +52,15 @@ class Model(nn.Module):
         self.trans_cov = configs.trans_cov # transition covariance of Kalman Filter
         
         # Settings for extracting latent features using Transformer
-        self.d_model = configs.d_model # Transformer embedding dimension
-        self.nhead = configs.nhead # Number of heads in multi-head attention
-        self.num_layers = configs.num_layers # Number of Transformer encoder layers
+        self.d_model = configs.d_model   # Transformer embedding dimension
+        self.nhead = configs.nhead          # Number of heads in multi-head attention
+        self.num_layers = configs.num_layers  # Number of Transformer encoder layers
         self.latent_proj = nn.Linear(1, self.d_model)
         self.transformer_layer = nn.TransformerEncoderLayer(d_model=self.d_model, nhead=self.nhead)
         self.transformer_encoder = nn.TransformerEncoder(self.transformer_layer, num_layers=self.num_layers)
         
-        # Decomposition using Kalman Filter
-        self.kalman_decomp = KalmanDecomposition(
-            observation_covariance = self.obs_cov,
-            transition_covariance = self.trans_cov)
+        self.ma_window = configs.ma_window
+        self.ma_decomp = MovingAverageDecomposition(window_size=self.ma_window) 
         
         # --- Patch-based processing setup ---
         self.n_patches = (self.seq_len - self.patch_len) // self.patch_stride + 1 # Number of patch
@@ -138,7 +136,7 @@ class Model(nn.Module):
         latent = self.compute_latent(x)
         
         # Decompose using Kalman Filter / shape: [B, seq_len, C]
-        trend_obs, residual_obs = self.kalman_decomp(x)
+        trend_obs, residual_obs = self.ma_decomp(x) # self.kalman_decomp(x)
         
         # ----- Trend branch -----
         # Patch extraction from trend_obs 

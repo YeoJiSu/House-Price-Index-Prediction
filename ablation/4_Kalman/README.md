@@ -1,4 +1,4 @@
-## Ablation 1: Different Kalman-Filter Paramter Settings.
+## Ablation: Different Kalman-Filter Paramter Settings.
 * Version $\alpha$ (Observation Covariance, Transition Covariance)
   * Version 1 (1, 1)
   * Version 2 (5, 0.5)

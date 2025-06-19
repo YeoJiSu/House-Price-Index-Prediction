@@ -1,4 +1,4 @@
-## Ablation 3: Effectiveness of Deep Residual Learning (PatchLatentMLP).
+## Ablation: Effectiveness of Deep Residual Learning (PatchLatentMLP).
 * Our Proposed Framework Review: Dynamic Factor Decompsition (DF) + Deep Residual Learning (DL)
   * DF: DFM ( t ) $\rightarrow$ Granger Causality + VAR ( t+ $\alpha$ ) $\rightarrow$ Kalman
   * DL: PatchLatentMLP ( t+ $\alpha$ )
