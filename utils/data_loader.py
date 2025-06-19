@@ -131,6 +131,23 @@ def standardization(train_df, test_df, not_col, target_cols):
             std_dict[x] = std
     return train_df_, test_df_, mean_dict, std_dict
 
+def standardization_valid(train_df, valid_df, test_df, not_col, target_cols):
+    train_df_ = train_df.copy()
+    valid_df_ = valid_df.copy()
+    test_df_ = test_df.copy()
+    cols = [col for col in train_df.columns if col != not_col]
+    mean_dict = {}
+    std_dict = {}
+    for x in cols:
+        mean, std = train_df_.agg(["mean", "std"]).loc[:, x]
+        train_df_[x] = (train_df_[x] - mean) / std
+        valid_df_[x] = (valid_df_[x] - mean) / std
+        test_df_[x] = (test_df_[x] - mean) / std
+        if x in target_cols:
+            mean_dict[x] = mean
+            std_dict[x] = std
+    return train_df_, valid_df_, test_df_,  mean_dict, std_dict
+
 def z_transform(X, mu, std):
     """
     ==========================
